@@ -229,7 +229,9 @@ function renderMyBadge() {
   const role = ROLES.find(r => r.id === me.role);
   const horaire = (me.start && me.end) ? `${me.start} – ${me.end}` : "";
   const rLabel = me.role === "autre" && me.autre ? `Autre — ${me.autre}` : role ? role.name : "";
-  const parts = [rLabel, me.deco ? "Installation et décoration" : ""].filter(Boolean);
+  const parts = [rLabel,me.deco ? "Installation et décoration" : "",me.rangement ? "Rangement de la salle" : ""].filter(Boolean);
+
+
   el.style.display = "flex";
   el.className = `my-badge${me.deco && !me.role ? " deco" : ""}`;
   el.innerHTML = `
