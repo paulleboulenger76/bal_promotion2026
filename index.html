@@ -132,10 +132,10 @@ const FIREBASE_URL = "https://balpromo-2026-default-rtdb.europe-west1.firebaseda
 
 const ROLES = [
   { id: "accueil", name: "Accueil des élèves", icon: "🚪", max: 4, group: "encadrement",
-    desc: "Vérifier le ticket d'entrée. À la sortie, vérifier la présence des parents avant le départ de l'élève." },
+    desc: "Vérifier le ticket d'entrée. À la sortie, vérifier la présence des parents avant le départ de l'élève et faire signer les parents." },
   { id: "surveillance", name: "Surveillance générale", icon: "👁️", max: 5, group: "encadrement",
     desc: "Assurer la surveillance à l'intérieur de la salle pendant toute la durée de la soirée." },
-  { id: "buffet", name: "Restauration / buffet", icon: "🍽️", max: 2, group: "encadrement",
+  { id: "buffet", name: "Restauration / buffet", icon: "🍽️", max: 4, group: "encadrement",
     desc: "Installer et gérer le buffet, veiller au réapprovisionnement et au rangement en fin de soirée." },
   { id: "securite", name: "Surveillance des abords", icon: "🛡️", max: 3, group: "encadrement",
     desc: "Surveiller les abords de la salle, contrôler les entrées/sorties et assurer la sécurité extérieure." },
@@ -143,6 +143,8 @@ const ROLES = [
     desc: "Tout autre rôle utile à la soirée. Précisez votre contribution dans le champ prévu." },
   { id: "deco", name: "Installation et décoration", icon: "🎨", max: null, group: "deco",
     desc: "Participer à l'installation de la salle et à sa décoration avant la soirée. Places illimitées, venez nombreux !" },
+  { id: "rangement", name: "Rangement de la salle", icon: "🧹", max: null, group: "deco",
+    desc: "Participer au rangement et au nettoyage de la salle après la soirée. Places illimitées." },
 ];
 
 let data = { inscriptions: [] };
