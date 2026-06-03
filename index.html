@@ -229,9 +229,12 @@ function renderMyBadge() {
   const role = ROLES.find(r => r.id === me.role);
   const horaire = (me.start && me.end) ? `${me.start} – ${me.end}` : "";
   const rLabel = me.role === "autre" && me.autre ? `Autre — ${me.autre}` : role ? role.name : "";
-  const parts = [rLabel,me.deco ? "Installation et décoration" : "",me.rangement ? "Rangement de la salle" : ""].filter(Boolean);
-
-
+  // ✅ CORRECTION : Ajoute me.rangement
+  const parts = [
+    rLabel,
+    me.deco ? "Installation et décoration" : "",
+    me.rangement ? "Rangement de la salle" : ""
+  ].filter(Boolean);
   el.style.display = "flex";
   el.className = `my-badge${me.deco && !me.role ? " deco" : ""}`;
   el.innerHTML = `
@@ -239,6 +242,7 @@ function renderMyBadge() {
     <button class="btn-edit" onclick="editMe()">✏️ Modifier</button>
   `;
 }
+
 
 function renderRoles() {
   const container = document.getElementById("roleCards");
