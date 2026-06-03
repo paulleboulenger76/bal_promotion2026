@@ -95,6 +95,9 @@ h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
 <div class="section-title">🎨 Installation et décoration</div>
 <div id="decoCard" class="roles-grid" style="grid-template-columns:1fr;"></div>
 
+<div class="section-title">🧹 Rangement de la salle</div>
+<div id="rangementCard" class="roles-grid" style="grid-template-columns:1fr;"></div>
+
 <div class="form-card">
   <h2>✏️ Votre inscription</h2>
   <div class="field">
@@ -143,13 +146,14 @@ const ROLES = [
     desc: "Tout autre rôle utile à la soirée. Précisez votre contribution dans le champ prévu." },
   { id: "deco", name: "Installation et décoration", icon: "🎨", max: null, group: "deco",
     desc: "Participer à l'installation de la salle et à sa décoration avant la soirée. Places illimitées, venez nombreux !" },
-  { id: "rangement", name: "Rangement de la salle", icon: "🧹", max: null, group: "deco",
+  { id: "rangement", name: "Rangement de la salle", icon: "🧹", max: null, group: "rangement",
     desc: "Participer au rangement et au nettoyage de la salle après la soirée. Places illimitées." },
 ];
 
 let data = { inscriptions: [] };
 let selectedRole = null;
 let decoSelected = false;
+let rangementSelected = false;
 let myName = null;
 let myId = null;
 let pollInterval = null;
@@ -180,6 +184,7 @@ async function loadData() {
       myName = me.name;
       selectedRole = me.role || null;
       decoSelected = me.deco || false;
+      rangementSelected = me.rangement || false;
       document.getElementById("inputName").value = me.name;
       if (me.start) document.getElementById("inputStart").value = me.start;
       if (me.end) document.getElementById("inputEnd").value = me.end;
@@ -198,9 +203,11 @@ function countRole(roleId) { return data.inscriptions.filter(i => i.role === rol
 function countDeco() { return data.inscriptions.filter(i => i.deco).length; }
 function membersForRole(roleId) { return data.inscriptions.filter(i => i.role === roleId); }
 function membersForDeco() { return data.inscriptions.filter(i => i.deco); }
+function membersForRangement() { return data.inscriptions.filter(i => i.rangement); }
+function countRangement() { return data.inscriptions.filter(i => i.rangement).length; }
 function toggleAutreField(show) { document.getElementById("autreField").style.display = show ? "block" : "none"; }
 
-function render() { renderStats(); renderMyBadge(); renderRoles(); renderDeco(); renderForm(); }
+function render() { renderStats(); renderMyBadge(); renderRoles(); renderDeco(); renderRangement(); renderForm(); }
 
 function renderStats() {
   const total = data.inscriptions.length;
@@ -281,12 +288,40 @@ function renderDeco() {
     </div>`;
 }
 
+
+function renderRangement() {
+  const role = ROLES.find(r => r.id === "rangement");
+  const count = countRangement();
+  const members = membersForRangement();
+  const isSelected = rangementSelected;
+  const badge = isSelected ? `<span class="badge badge-selected-deco">Votre choix</span>`
+    : `<span class="badge badge-unlimited-deco">∞ Places libres</span>`;
+  const tags = members.map(m => {
+    const isMe = m.id === myId;
+    return `<span class="name-tag${isMe ? " me-deco" : ""}">${m.name}${isMe?" (vous)":""}</span>`;
+  }).join("");
+  document.getElementById("rangementCard").innerHTML = `
+    <div class="role-card${isSelected ? " selected-deco" : ""}" onclick="toggleRangement()">
+      <div class="role-header"><span class="role-icon">${role.icon}</span><span class="role-name">${role.name}</span></div>
+      <p class="role-desc">${role.desc}</p>
+      <div class="progress-row"><span>${count} inscrit${count>1?"s":""}</span>${badge}</div>
+      <div class="names-list">${tags || '<em style="font-size:12px;color:#bbb">Personne pour l\\'instant</em>'}</div>
+    </div>`;
+}
+
+function toggleRangement() {
+  rangementSelected = !rangementSelected;
+  renderRangement(); renderForm();
+}
+
 function renderForm() {
   const hint = document.getElementById("roleHint");
   const btn = document.getElementById("btnSubmit");
   const parts = [];
   if (selectedRole) { const r = ROLES.find(x => x.id === selectedRole); if(r) parts.push(r.name); }
   if (decoSelected) parts.push("Installation et décoration");
+  if (rangementSelected) parts.push("Rangement de la salle");
+  if (rangementSelected) parts.push("Rangement de la salle");
   if (parts.length > 0) {
     hint.style.display = "block";
     hint.textContent = "ℹ️ Sélectionné : " + parts.join(" + ");
@@ -332,7 +367,7 @@ async function handleSubmit() {
     myId = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     try { localStorage.setItem("soiree_my_id", myId); } catch(e) {}
   }
-  const entry = { id: myId, name, role: selectedRole || null, start, end, autre: selectedRole === "autre" ? autre : "", deco: decoSelected };
+  const entry = { id: myId, name, role: selectedRole || null, start, end, autre: selectedRole === "autre" ? autre : "", deco: decoSelected, rangement: rangementSelected };
   const idx = data.inscriptions.findIndex(i => i.id === myId);
   if (idx >= 0) data.inscriptions[idx] = entry; else data.inscriptions.push(entry);
   myName = name;
